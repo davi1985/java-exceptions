@@ -28,8 +28,6 @@ public class Main3 {
 
             System.out.println();
             System.out.println("Enter data to update the reservation: ");
-            System.out.print("Room number: ");
-            roomNumber = scanner.nextInt();
 
             System.out.print("Check-in date (dd/MM/yyyy): ");
             checkIn = dateFormat.parse(scanner.next());
@@ -39,12 +37,11 @@ public class Main3 {
 
             Date now = new Date();
 
-            if (checkIn.before(now) || checkOut.before(now)) {
-                System.out.println("Error in reservation: Reservation date for update must be future dates.");
-            } else if (!checkOut.after(checkIn)) {
-                System.out.println("Error in reservation: Check-out date must be after check-in date.");
+            String error = reservation.updateDates(checkIn, checkIn);
+
+            if (error != null) {
+                System.out.println("Error in reservation: " + error);
             } else {
-                reservation.updateDates(checkIn, checkIn);
                 System.out.println("Reservation Updated: " + reservation);
             }
         }
