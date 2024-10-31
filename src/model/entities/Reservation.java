@@ -2,45 +2,52 @@ package model.entities;
 
 import model.exceptions.DomainException;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class Reservation {
 
     private Integer roomNumber;
-    private Date checkIn;
-    private Date checkOut;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public Reservation(Integer roomNumber, Date checkIn, Date checkOut) throws DomainException {
-        if (!checkOut.after(checkIn)) {
-            throw new DomainException("Check-out date must be after check-in date.");
-        }
+    public Reservation(Integer roomNumber, LocalDate
+            checkIn, LocalDate checkOut) throws DomainException {
+        validateDates(checkIn);
 
         this.roomNumber = roomNumber;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
     }
 
-    public long duration() {
-        long diff = checkOut.getTime() - checkIn.getTime();
-
-        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+    public Long duration() {
+        return ChronoUnit.DAYS.between(checkIn, checkOut);
     }
 
-    public void updateDates(Date checkIn, Date checkOut) throws DomainException {
-        if (!checkOut.after(checkIn)) {
-            throw new DomainException("Check-out date must be after check-in date.");
-        }
-
-        if (!checkOut.after(checkIn)) {
-            throw new DomainException("Check-out date must be after check-in date.");
-        }
+    public void updateDates(LocalDate checkIn, LocalDate checkOut) throws DomainException {
+        validateDates(checkIn, checkOut);
 
         this.checkIn = checkIn;
         this.checkOut = checkOut;
+    }
+
+    private void validateDates(LocalDate checkIn) throws DomainException {
+        if (!checkOut.isAfter(checkIn)) {
+            throw new DomainException("Check-out date must be after check-in date.");
+        }
+    }
+
+    private void validateDates(LocalDate checkIn, LocalDate checkOut) throws DomainException {
+        if (!checkOut.isAfter(checkIn)) {
+            throw new DomainException("Check-out date must be after check-in date.");
+        }
+
+        if (!checkOut.isAfter(checkOut)) {
+            throw new DomainException("Check-out date must be after check-in date.");
+        }
     }
 
     public Integer getRoomNumber() {
@@ -51,11 +58,11 @@ public class Reservation {
         this.roomNumber = roomNumber;
     }
 
-    public Date getCheckIn() {
+    public LocalDate getCheckIn() {
         return checkIn;
     }
 
-    public Date getCheckOut() {
+    public LocalDate getCheckOut() {
         return checkOut;
     }
 
