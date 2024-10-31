@@ -25,8 +25,8 @@ public class Main {
             scanner.next();
         } catch (InputMismatchException e) {
             System.out.println("Input error!");
+        } finally {
+            scanner.close();
         }
-
-        scanner.close();
     }
 }
